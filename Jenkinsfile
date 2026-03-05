@@ -30,7 +30,7 @@ pipeline {
         stage('Push Image') {
             steps {
                 sh 'docker login -u amine311002 -p Amine1234'
-                sh 'docker push yahyabichiou/devops-app:1.0'
+                sh 'docker push amine311002/devops-app:1.0'
             }        
         }
 
