@@ -1,3 +1,50 @@
+pipeline {
+    agent any
+
+    tools {
+        jdk 'JAVA_HOME'
+        maven 'M2_HOME'
+    }
+
+    stages {
+
+        stage('GIT') {
+            steps {
+                git branch: 'main',
+                url: 'https://github.com/Amine1889/devops_project.git'
+            }
+        }
+
+        stage('Compile Stage') {
+            steps {
+                sh 'mvn clean package -DskipTests'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t amine311002/devops-app:1.0 .'
+            }
+        }
+
+        stage('Push Image') {
+            steps {
+                sh 'docker login -u amine311002 -p Amine1234'
+                sh 'docker push amine311002/devops-app:1.0'
+            }        
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh 'kubectl apply -f k8s-deployment.yaml'
+            }
+        }
+
+    }
+}
+github.com
+5:46 AM
+Yahya
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -18,7 +65,24 @@ spec:
         image: amine311002/devops-app:1.0
         imagePullPolicy: Always
         ports:
-        - containerPort: 8080
+        - containerPort: 8089
+        
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:mysql://mysql-service:3306/springdb
+        
+        - name: SPRING_DATASOURCE_USERNAME
+          value: root
+        
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: root123
+
+        - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+          value: update
+
+        - name: SPRING_JPA_DATABASE_PLATFORM
+          value: org.hibernate.dialect.MySQL8Dialect
+
 ---
 apiVersion: v1
 kind: Service
@@ -30,6 +94,6 @@ spec:
   selector:
     app: devops-app
   ports:
-  - port: 8080
-    targetPort: 8080
+  - port: 8089
+    targetPort: 8089
     nodePort: 30080
