@@ -11,7 +11,7 @@ pipeline {
         stage('GIT') {
             steps {
                 git branch: 'main',
-                url: 'https://github.com/BoRedo-64/devops.git'
+                url: 'https://github.com/Amine1889/devops_project.git'
             }
         }
 
@@ -23,13 +23,13 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t yahyabichiou/devops-app:1.0 .'
+                sh 'docker build -t amine311002/devops-app:1.0 .'
             }
         }
 
         stage('Push Image') {
             steps {
-                sh 'docker login -u yahyabichiou -p Bichiou2003'
+                sh 'docker login -u amine311002 -p Amine1234'
                 sh 'docker push yahyabichiou/devops-app:1.0'
             }        
         }
