@@ -31,7 +31,12 @@ pipeline {
             steps {
                 sh 'docker login -u amine311002 -p Amine1234'
                 sh 'docker push amine311002/devops-app:1.0'
-            }        
+            }      
+         stage('Deploy to Kubernetes') {
+            steps {
+                sh 'kubectl apply -f k8s-deployment.yaml'
+    }
+}   
         }
 
     }
